@@ -13,15 +13,21 @@ import (
 )
 
 func main() {
-		err := godotenv.Load()
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 	mux := http.NewServeMux()
+	mux.HandleFunc("/", handleHealthCheck)
 	mux.HandleFunc("/summary", corsMiddleware(handleSummaryRequest))
 
 	fmt.Println("Server is running on http://localhost:8080")
 	http.ListenAndServe(":8080", mux)
+}
+
+func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {

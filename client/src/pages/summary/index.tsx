@@ -15,7 +15,11 @@ export default function Summary() {
 				setIsLoading(true);
 				setError("");
 				try {
-					const response = await fetch("http://localhost:8080/summary", {
+					const apiUrl =
+						process.env.NODE_ENV === "production"
+							? process.env.NEXT_PUBLIC_PRODUCTION_API_URL
+							: process.env.NEXT_PUBLIC_LOCAL_API_URL;
+					const response = await fetch(`${apiUrl}/summary`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
