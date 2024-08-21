@@ -12,11 +12,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// 環境変数
+var env string
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	env = os.Getenv("GO_ENV")
+	if env == "" {
+		env = "development"
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handleHealthCheck)
 	mux.HandleFunc("/summary", corsMiddleware(handleSummaryRequest))
@@ -32,7 +41,11 @@ func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // 本番環境では具体的なドメインを指定
+		allowedOrigin := "http://localhost:3000"
+		if env == "production" {
+			allowedOrigin = "https://hayayomiai.com"
+		}
+		w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
