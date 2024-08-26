@@ -8,6 +8,7 @@ export default function Summary() {
 	const [summary, setSummary] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [showToast, setShowToast] = useState(false);
 
 	useEffect(() => {
 		if (title) {
@@ -39,6 +40,28 @@ export default function Summary() {
 		}
 	}, [title]);
 
+	useEffect(() => {
+		if (showToast) {
+			const timer = setTimeout(() => {
+				setShowToast(false);
+			}, 3000);
+			return () => clearTimeout(timer);
+		}
+	}, [showToast]);
+
+	const handleSave = () => {
+		fetch("/api/histories/create", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ title: title as string, content: summary }),
+		}).then(() => {
+			setShowToast(true);
+		});
+		// TODO:ここでエラー返ってきた時にうまく処理できてなさそう
+	};
+
 	if (error) {
 		return <div>エラー: {error}</div>;
 	}
@@ -48,13 +71,31 @@ export default function Summary() {
 			<h1 className="text-3xl font-bold mb-6">{title}</h1>
 			<div className="bg-white shadow-md rounded-lg p-6">
 				{isLoading ? (
-					<div className="flex justify-center items-center h-40">
-						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+					<div className="flex flex-col justify-center items-center h-40">
+						<h3 className="text-xl font-bold text-primary">AIが要約中...</h3>
+						<div className="loading loading-dots loading-lg text-primary"></div>
 					</div>
 				) : (
-					<ReactMarkdown className="prose max-w-none">{summary}</ReactMarkdown>
+					<>
+						<h3 className="text-xl font-bold text-primary">AIの要約結果</h3>
+						<ReactMarkdown className="prose max-w-none">
+							{summary}
+						</ReactMarkdown>
+						<div className="mt-4 flex justify-center">
+							<button className="btn btn-primary btn-lg" onClick={handleSave}>
+								要約を保存する
+							</button>
+						</div>
+					</>
 				)}
 			</div>
+			{showToast && (
+				<div className="toast toast-top toast-center">
+					<div className="alert alert-success">
+						<span className="text-white">要約が保存されました。</span>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

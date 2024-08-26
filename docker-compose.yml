@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=hayayomiai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+
+volumes:
+  postgres_data:
