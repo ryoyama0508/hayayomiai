@@ -14,41 +14,39 @@ interface History {
 
 export default function HistoryDetail() {
 	const router = useRouter();
-	console.log(router);
-	const id = router.query.id;
-	console.log(id);
+	const { id } = router.query;
 	const [history, setHistory] = useState<History | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState("");
 
 	useEffect(() => {
-		if (id) {
-			const fetchHistory = async () => {
-				setIsLoading(true);
-				setError("");
-				try {
-					const response = await fetch(`/api/histories/${id}`);
-					if (response.ok) {
-						const data = await response.json();
-						setHistory(data);
-					} else {
-						setError("履歴の取得に失敗しました");
-					}
-				} catch (error) {
-					setError("エラーが発生しました: " + (error as Error).message);
-				} finally {
-					setIsLoading(false);
-				}
-			};
+		if (!router.isReady) return;
 
-			fetchHistory();
-		}
-	}, [id]);
+		const fetchHistory = async () => {
+			setIsLoading(true);
+			setError("");
+			try {
+				const response = await fetch(`/api/histories/${id}`);
+				if (response.ok) {
+					const data = await response.json();
+					setHistory(data);
+				} else {
+					setError("履歴の取得に失敗しました");
+				}
+			} catch (error) {
+				setError("エラーが発生しました: " + (error as Error).message);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchHistory();
+	}, [router.isReady, id]);
 
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<Link href="/histories">
-				<button className="btn btn-primary mb-4">戻る</button>
+				<button className="btn btn-primary btn-sm mb-4">←戻る</button>
 			</Link>
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center h-40">
