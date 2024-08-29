@@ -15,8 +15,9 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=builder /app/main .
-COPY .env .
+COPY --from=builder /app/start.sh .
+RUN chmod +x start.sh
 
 EXPOSE 8080
 
-CMD ["./main"]
+CMD ["./start.sh"]
