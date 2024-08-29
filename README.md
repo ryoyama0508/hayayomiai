@@ -12,6 +12,12 @@
 go run main.go
 ```
 
+## Migration
+
+```bash
+docker-compose run app go run cobra/main.go migrate
+```
+
 ## 環境変数
 
 `.env`ファイルに以下の環境変数を設定してください：

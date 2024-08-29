@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { FiMenu, FiX, FiHome, FiClock, FiMail } from "react-icons/fi";
+import {
+	FiMenu,
+	FiX,
+	FiHome,
+	FiClock,
+	FiMail,
+	FiBookOpen,
+} from "react-icons/fi";
 import { useRouter } from "next/router";
 
 const Header: React.FC = () => {
@@ -74,12 +81,12 @@ const Header: React.FC = () => {
 								</li>
 								<li className="mb-2">
 									<Link
-										href="/history"
+										href="/histories"
 										onClick={toggleDrawer}
-										className={getLinkClass("/history")}
+										className={getLinkClass("/histories")}
 									>
 										<FiClock className="w-5 h-5 mr-3" />
-										<span>履歴</span>
+										<span>みんなの要約履歴</span>
 									</Link>
 								</li>
 								<li className="mb-2">
