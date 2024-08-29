@@ -33,14 +33,13 @@ func initDB() error {
 var env string
 
 func initEnv() error {
-	err := godotenv.Load()
-	if err != nil {
-		return err
-	}
-
 	env = os.Getenv("GO_ENV")
 	if env == "" {
 		env = "development"
+		err := godotenv.Load()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
